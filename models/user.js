@@ -4,13 +4,13 @@ const validator = require('validator');
 const userSchema = new Schema(
     {
         username: {
-            type: string,
+            type: String,
             required: true,
             unique: true,
             trimmed: true,
         },
         email: {
-            type: string,
+            type: String,
             required: true,
             unique: true,
             lowercase: true,
@@ -21,21 +21,38 @@ const userSchema = new Schema(
                 message: 'Invalid email address'
               }
         },
-        thoughts: {
-            type: mongoose.Schema.Types.ObjectId,
+        thoughts: [{
+            type: Schema.Types.ObjectId,
             ref: "Thought",
-        },
-        friends: {
-            type: mongoose.Schema.Types.ObjectId,
+        }],
+        friends: [{
+            type: Schema.Types.ObjectId,
             ref: "User",
-        },
+        }],
         createdAt:{
             type: Date,
             default: Date.now,
         },      
-    }
-);
+    },
+    {
+        toJSON: {
+          virtuals: true,
+        },
+        id: false,
+      }
+    );
+    
+    // virtual property: gets friends length
+    userSchema.virtual('friendCount').get(function () {
+      return this.friends.length;
+    });
+
+
+
+
+
 
 const User = model("User", userSchema);
 
-module.exports = {User};
+
+module.exports = User;

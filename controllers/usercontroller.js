@@ -3,6 +3,7 @@ const {User, Thought, Reaction} = require("../models");
 
 //create user
 
+
 module.exports = {
     async createUser(req, res){
         try{
@@ -49,26 +50,65 @@ module.exports = {
         // get all Users
         async getUser(req, res){
             try{
-                const user = await User.find().populate("thoughts", "friends");
+                const user = await User.find().populate("Thought", "friends");
                 res.json(user);
             }catch (err) {
                 console.log(err);
                 return res.status(500).json(err);
             }
     },
-            //get single thought
-        async getSingleUser(){
+            //get single User
+        async getSingleUser(req, res){
         try{
-            const user = await User.findOne({_id: req.params.userId}).populate("username", "friends");
-
+            const user = await User.findOne({_id: req.params.userId}).populate("thoughts");
+            console.log(user);
             if(!user) {
                 res.status(404).json({message: "no User found"});
             }
             res.json(user);
         } catch (err) {
-        res.status(500).json(err);
+            console.log(err);
+        return res.status(500).json(err);
       }
     },
+    //add a friend
+    async addfriend (req, res){
+        try {
+            console.log(req);
+
+            const friend = await User.findByIdAndUpdate(
+              req.params.friendId, 
+              { $push: { friends: req.body._id } });
+              console.log(friend);
+            res.json(friend);  
+            }catch (err) {
+                console.log(err);
+                return res.status(500).json(err);
+            }
+    },
+    // Remove friend from a user
+  async removeFriend(req, res) {
+    try {
+      const friend = await User.findOneAndUpdate(
+        { _id: req.params.UserId },
+        { $pull: { reactions: { _id: req.params.friendId } } },
+        { runValidators: true, new: true }
+      );
+      
+
+      if (!friend) {
+        return res
+          .status(404)
+          .json({ message: 'No though found with that ID :(' });
+      }
+
+      res.json(friend);
+    } catch (err) {
+      console.log(err);
+      res.status(500).json(err);
+    }
+  },
+
 
 
 };

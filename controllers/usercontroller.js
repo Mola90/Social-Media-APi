@@ -50,7 +50,7 @@ module.exports = {
         // get all Users
         async getUser(req, res){
             try{
-                const user = await User.find().populate("Thought", "friends");
+                const user = await User.find().populate("thoughts", "friends");
                 res.json(user);
             }catch (err) {
                 console.log(err);
@@ -60,7 +60,7 @@ module.exports = {
             //get single User
         async getSingleUser(req, res){
         try{
-            const user = await User.findOne({_id: req.params.userId}).populate("thoughts");
+            const user = await User.findOne({_id: req.params.userId}).populate("thoughts", "friends");
             console.log(user);
             if(!user) {
                 res.status(404).json({message: "no User found"});

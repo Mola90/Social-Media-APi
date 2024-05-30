@@ -17,7 +17,7 @@ module.exports = {
     //delete user
     async deleteUser(req, res) {
         try {
-            const user = await User.findOneAndRemove({_id: req.params.userId});
+            const user = await User.findOneAndDelete({_id: req.params.userId});
 
             if (!user) {
                 return res.status(404).json({message: "No such User"});
@@ -99,7 +99,7 @@ module.exports = {
       if (!friend) {
         return res
           .status(404)
-          .json({ message: 'No though found with that ID :(' });
+          .json({ message: 'No friend found with that ID :(' });
       }
 
       res.json(friend);
